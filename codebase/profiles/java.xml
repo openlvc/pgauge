@@ -120,12 +120,9 @@
 			<fileset dir="${basedir}" includes="build.properties"/>
 
 			<!-- dependencies - create just one jarfile -->
-			<archives>
-				<zips>
-					<fileset dir="${log4j.dir}" includes="**/*.jar"/>
-					<fileset dir="${jfree.dir}" includes="**/*.jar"/>
-				</zips>
-			</archives>
+			<zipfileset includes="**/*.class" src="${log4j.dir}/log4j-1.2.17.jar"/>
+			<zipfileset includes="**/*.class" src="${jfree.dir}/jfreechart-1.0.12.jar"/>
+			<zipfileset includes="**/*.class" src="${jfree.dir}/jcommon-1.0.15.jar"/>
 
 			<!-- MANIFEST -->
 			<manifest>
