@@ -1,0 +1,79 @@
+<?xml version="1.0"?>
+<!--
+               Welcome to PGauge - HLA Benchmarking Suite
+               https://github.com/openlvc/pgauge
+
+         File: profiles/init.xml
+      Purpose: Contains project-specific settings that should be loaded
+               for all builds - regardless of platform or version.
+-->
+<project name="init">
+
+	<!-- =========================================================== -->
+	<!--                    RTI Availability Check                   -->
+	<!-- =========================================================== -->
+	
+	<!-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> -->
+	<!-- Step 1: Convert platform properties to common names -->
+	<!-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> -->
+	<!-- Mac OS X -->
+	<if><isset property="platform.macosx"/><then>
+		<property name="rti.home" value="${rti.home.macosx}"/>
+		<property name="rti.lib.dir" value="${rti.maclib.dir}"/>
+	</then></if>
+
+	<!-- Linux -->
+	<if><isset property="platform.linux"/><then>
+		<property name="rti.home" value="${rti.home.linux}"/>
+		<property name="rti.lib.dir" value="${rti.linlib.dir}"/>
+	</then></if>
+
+	<!-- Windows -->
+	<if><isset property="platform.windows"/><then>
+		<property name="rti.home" value="${rti.home.windows}"/>
+		<property name="rti.lib.dir" value="${rti.winlib.dir}"/>
+	</then></if>
+
+	<!-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> -->
+	<!-- Step 2: Check that the other required properties exist -->
+	<!-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> -->
+	<if>
+		<not><isset property="rti.home"/></not>
+		<then><fail message="The rti.home property must be set (build.properties)"/></then>
+	</if>
+	<if>
+		<not><isset property="rti.jars.dir"/></not>
+		<then><fail message="The rti.jars.dir property must be set (build.properties)"/></then>
+	</if>
+	<if>
+		<not><isset property="rti.include.dir"/></not>
+		<then><fail message="The rti.include.dir property must be set (build.properties)"/></then>
+	</if>
+	<if>
+		<not><isset property="rti.lib.dir"/></not>
+		<then><fail message="The rti.lib.dir property must be set (build.properties)"/></then>
+	</if>
+
+	<!-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> -->
+	<!-- Step 3: Verify that the settings actually point to something -->
+	<!-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> -->
+	<if>
+		<not><available type="dir" file="${rti.home}"/></not>
+		<then><fail message="Location in [rti.home.${platform}] doesn't exist: ${rti.home} (build.properties)"/></then>
+	</if>
+	<if>
+		<not><available type="dir" file="${rti.home}/${rti.jars.dir}"/></not>
+		<then><echo>  !!WARNING!!  Location in [rti.jars.dir] doesn't exist: ${rti.home}/${rti.jars.dir} (build.properties)</echo></then>
+	</if>
+	<if>
+		<not><available type="dir" file="${rti.home}/${rti.include.dir}"/></not>
+		<then><echo>  !!WARNING!!  Location in [rti.include.dir] doesn't exist: ${rti.home}/${rti.include.dir} (build.properties)</echo></then>
+	</if>
+	<if>
+		<not><available type="dir" file="${rti.home}/${rti.lib.dir}"/></not>
+		<then><echo>  !!WARNING!!  Location in [rti.lib.dir] doesn't exist: ${rti.home}/${rti.lib.dir} (build.properties)</echo></then>
+	</if>
+
+
+
+</project>

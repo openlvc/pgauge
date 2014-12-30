@@ -1,0 +1,8 @@
+#!/bin/bash
+
+# bring in the environment settings
+source bin/rti-environment
+
+# Fire up pgauge
+#java -Dcom.sun.management.jmxremote -cp $RTI_JAR:lib/pgauge.jar org.portico.pgauge.latency.Responder $*
+java -cp $RTI_JAR:lib/pgauge.jar org.portico.pgauge.latency.Responder $*

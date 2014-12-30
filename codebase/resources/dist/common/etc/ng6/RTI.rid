@@ -1,0 +1,282 @@
+;; this is an example of a small RID file.  Please see Sample-RTI.rid
+;; from the distribution for an exhaustive RID file which includes
+;; descriptions of the parameters.
+
+(RTI
+ (ProcessSection
+  (RtiExecutive
+   ;;(RtiExecutiveEndpoint 127.0.0.1:8989)
+
+   ;; remember that rtiexec -multicastDiscoveryEndpoint flag must
+   ;; match this, or you&apos;ll get NameService errors
+   ;; (RtiExecutiveMulticastDiscoveryEndpoint 224.9.9.2:8989)
+  )
+ )
+
+ (FederationSection
+  (Networking
+   (BundlingOptions
+    (UDP
+     ;;(MaxTimeBeforeSendInSeconds 0.005)
+     ;;(MaxBytesBeforeSend    63000)
+    )
+    (TCP
+     ;;(MaxTimeBeforeSendInSeconds 0.005)
+     ;;(MaxBytesBeforeSend    63000)
+    )
+   )
+   (MulticastOptions
+    ;; having different federations on network use different ranges of
+    ;; multicast addresses will help performance
+    (BaseAddress 224.100.0.0)
+    ;;(MaxAddress 239.255.255.255)
+   )
+   (FederationExecutive
+    (FilenameToRedirectStdout fedex.stdout)
+    (FilenameToRedirectStderr fedex.stderr)
+    )
+  )
+
+  (Advisories
+   (InteractionRelevanceAdvisories Disabled
+    (AdvisorySwitchDefault Disabled)
+   )
+   (ClassRelevanceAdvisories Disabled
+    (AdvisorySwitchDefault Disabled)
+   )
+   (AttributeRelevanceAdvisories Disabled
+    (AdvisorySwitchDefault Disabled)
+   )
+   (AttributeScopeAdvisories Enabled
+    (AdvisorySwitchDefault Disabled)
+   )
+  )
+
+  (FederateSection
+   (EventRetractionHandleCacheOptions
+    ;; the next two options will disable event retractions, which is
+    ;; OK since helloworld doesn&apos;t use them
+    (MinimumCacheSizeBeforePerformingPurge 0)
+    (NumberOfEventRetractionHandlesToCreateBeforeStartingNewPurgeCycle 0)
+   )
+  )
+ )
+)
+(RTIdebug
+ ;; The RTI_Debug section is used to set the level of internal diagnostics.
+ ;; This section will have no effect on the optimized and released versions of
+ ;; the RTI since the mechanisms will be compiled away.
+
+ (DebugMessages
+  (ViewPackageSet
+    (RTI_P_OTHER Off)
+    (RTI_P_buffer Off)
+    (RTI_P_command Off)
+    (RTI_P_corbaCap Off)
+    (RTI_P_ddm Off)
+    (RTI_P_debug Off)
+    (RTI_P_fedDatabase Off)
+    (RTI_P_fedExec Off)
+    (RTI_P_fedParser Off)
+    (RTI_P_ifSpec Off)
+    (RTI_P_interactionMgt Off)
+    (RTI_P_launcher Off)
+    (RTI_P_lbtsCalculator Off)
+    (RTI_P_lrcMgr Off)
+    (RTI_P_mom Off)
+    (RTI_P_objMgt Off)
+    (RTI_P_orbMgr Off)
+    (RTI_P_ownMgt Off)
+    (RTI_P_presMgt Off)
+    (RTI_P_ridDatabase Off)
+    (RTI_P_ridParser Off)
+    (RTI_P_rtiExec Off)
+    (RTI_P_sunos Off)
+    (RTI_P_timeMgt Off)
+    (RTI_P_utils Off)
+    (RTI_P_virtNet Off)
+    (RTI_P_vnMulticast Off)
+    (RTI_P_winnt Off)
+    (RTI_P_process Off)
+    (RTI_P_interconnect Off)
+  )
+
+  ;;Tracing is on if the RTI_G_tester bit is set (currently bit 5)
+  (ViewGroupSet
+    (RTI_G_low On)
+    (RTI_G_medLow On)
+    (RTI_G_medium On)
+    (RTI_G_medHigh On)
+    (RTI_G_high On)
+    (RTI_G_tester On)
+    (RTI_G_user0 On)
+    (RTI_G_user1 On)
+    (RTI_G_user2 On)
+    (RTI_G_user3 On)
+    (RTI_G_user4 On)
+    (RTI_G_user5 On)
+    (RTI_G_user6 On)
+    (RTI_G_user7 On)
+    (RTI_G_user8 On)
+    (RTI_G_user9 On)
+  )
+
+  (TracingOptions 
+   ;; may set bit values here instead of individual values e.g. 0xff.  Tracing
+   ;; is enabled only if the RTI_G_tester bit is set in Debug
+   (EnterMethodOptions
+    (PrintMessage     Off);; message printed on method entry
+    (PrintArguments   Off);; method arguments printed on method entry
+    (PrintObjectState Off);; object state printed on method entry
+   )
+   (ExitMethodOptions
+    (PrintMessage            Off);; message printed on method exit
+    (PrintObjectState        Off);; object state printed on method exit
+    (PrintObjectStateChanges Off);; difference of state entry/exit state
+   )
+  )
+ ) 
+ (WarningMessages
+  (ViewPackageSet
+    (RTI_P_OTHER On)
+    (RTI_P_buffer On)
+    (RTI_P_command On)
+    (RTI_P_corbaCap On)
+    (RTI_P_ddm On)
+    (RTI_P_debug On)
+    (RTI_P_fedDatabase On)
+    (RTI_P_fedExec On)
+    (RTI_P_fedParser On)
+    (RTI_P_ifSpec On)
+    (RTI_P_interactionMgt On)
+    (RTI_P_launcher On)
+    (RTI_P_lbtsCalculator On)
+    (RTI_P_lrcMgr On)
+    (RTI_P_mom On)
+    (RTI_P_objMgt On)
+    (RTI_P_orbMgr On)
+    (RTI_P_ownMgt On)
+    (RTI_P_presMgt On)
+    (RTI_P_ridDatabase Off)
+    (RTI_P_ridParser On)
+    (RTI_P_rtiExec On)
+    (RTI_P_sunos On)
+    (RTI_P_timeMgt On)
+    (RTI_P_utils On)
+    (RTI_P_virtNet On)
+    (RTI_P_vnMulticast Off)
+    (RTI_P_winnt On)
+    (RTI_P_process On)
+    (RTI_P_interconnect On)
+  )
+  (ViewGroupSet
+    (RTI_G_low On)
+    (RTI_G_medLow On)
+    (RTI_G_medium On)
+    (RTI_G_medHigh On)
+    (RTI_G_high On)
+    (RTI_G_tester On)
+    (RTI_G_user0 On)
+    (RTI_G_user1 On)
+    (RTI_G_user2 On)
+    (RTI_G_user3 On)
+    (RTI_G_user4 On)
+    (RTI_G_user5 On)
+    (RTI_G_user6 On)
+    (RTI_G_user7 On)
+    (RTI_G_user8 On)
+    (RTI_G_user9 On)
+  )
+ )
+ (ErrorMessages
+  (ViewPackageSet
+    (RTI_P_OTHER On)
+    (RTI_P_buffer On)
+    (RTI_P_command On)
+    (RTI_P_corbaCap On)
+    (RTI_P_ddm On)
+    (RTI_P_debug On)
+    (RTI_P_fedDatabase On)
+    (RTI_P_fedExec On)
+    (RTI_P_fedParser On)
+    (RTI_P_ifSpec On)
+    (RTI_P_interactionMgt On)
+    (RTI_P_launcher On)
+    (RTI_P_lbtsCalculator On)
+    (RTI_P_lrcMgr On)
+    (RTI_P_mom On)
+    (RTI_P_objMgt On)
+    (RTI_P_orbMgr On)
+    (RTI_P_ownMgt On)
+    (RTI_P_presMgt On)
+    (RTI_P_ridDatabase On)
+    (RTI_P_ridParser On)
+    (RTI_P_rtiExec On)
+    (RTI_P_sunos On)
+    (RTI_P_timeMgt On)
+    (RTI_P_utils On)
+    (RTI_P_virtNet On)
+    (RTI_P_vnMulticast On)
+    (RTI_P_winnt On)
+    (RTI_P_process On)
+    (RTI_P_interconnect On)
+  )
+  (ViewGroupSet
+    (RTI_G_low On)
+    (RTI_G_medLow On)
+    (RTI_G_medium On)
+    (RTI_G_medHigh On)
+    (RTI_G_high On)
+    (RTI_G_tester On)
+    (RTI_G_user0 On)
+    (RTI_G_user1 On)
+    (RTI_G_user2 On)
+    (RTI_G_user3 On)
+    (RTI_G_user4 On)
+    (RTI_G_user5 On)
+    (RTI_G_user6 On)
+    (RTI_G_user7 On)
+    (RTI_G_user8 On)
+    (RTI_G_user9 On)
+  )
+ )
+
+ ;; The following parameters are related to the save and restore operations.
+ ;; The sanity check attempts to determine if any members to C++ classes that
+ ;; are saved/restored have been added or removed.  This mechanism does not work
+ ;; on all platforms, please consult the software for more information.
+
+ (PrintSaveRestoreSanityCheckErrorMessagesOnError Yes)
+ (AbortWhenSaveRestoreSanityCheckFails Yes)
+ (SelfDiagnostics
+  (CheckSaveRestoreMethodsBeforeExecution No);; Diagnose save/restore
+  )
+
+  ;; The following parameter allows turning off sending of admin messages
+  ;; related to regions during restore.  This makes restore take roughly
+  ;; one-half as long as when the messages are sent.  It is added here
+  ;; since it is not clear whether or not the messages are actually needed.
+  ;; The default value is Yes, i.e., no admin messages are sent during
+  ;; restore.
+
+  (DisableSendAdminMessagesDuringRestore Yes)
+
+  ;; If PrintExceptions is set to &quot;Yes&quot;, then exceptions will be printed when
+  ;; generated.  This can aid in debugging when an uncaught exceptions causes
+  ;; unexpected behavior
+  (PrintExceptions No)
+  
+  ;; Install Signal handlers to aid in debugging
+  (SignalHandlers
+     (SIGABRT No)
+     (SIGBUS  No)
+     (SIGSEGV No)
+     (SIGFPE  No)
+     (SIGINT  No)
+     
+     (AbortOnSignal No)
+     (PauseOnSignal No)
+     (GenerateTestCore No)
+  )
+  
+);; End of RTI_Debug

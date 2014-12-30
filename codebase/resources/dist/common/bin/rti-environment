@@ -1,0 +1,12 @@
+#!/bin/bash
+
+# Portico Settings
+RTI_HOME=[rtihome]
+RTI_JAR=$RTI_HOME/lib/portico.jar
+RTI_LIB=$RTI_HOME/lib/gcc4:$RTI_HOME/jre/lib/i386/client:$RTI_HOME/jre/lib/amb64/server
+RTI_RID_FILE=etc/portico/RTI.rid
+
+# Environment Setup
+export RTI_HOME RTI_JAR RTI_LIB RTI_RID_FILE
+export LD_LIBRARY_PATH=$RTI_LIB:$LD_LIBRARY_PATH
+export DYLD_LIBRARY_PATH=$RTI_LIB:$DYLD_LIBRARY_PATH

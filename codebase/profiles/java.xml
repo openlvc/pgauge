@@ -1,0 +1,154 @@
+<?xml version="1.0"?>
+<!--
+               Welcome to PGauge - HLA Benchmarking Suite
+               https://github.com/openlvc/pgauge
+
+         File: profiles/java.xml
+      Purpose: The common java profile defining compile, jar and sandbox
+               tasks. As Java is cross platform, we can combine most of
+               this work under a single file.
+-->
+<project name="java">
+
+	<!-- ================================================================================= -->
+	<!--                                 General Settings                                  -->
+	<!-- ================================================================================= -->
+	<description>
+		Java build profile for main source modules
+	</description>
+
+	<!-- ==== General Java Properties ==== -->
+	<property name="java.src.dir"             location="${src.dir}/java"/>
+	<property name="java.build.dir"           location="${build.dir}/java"/>
+	<property name="resources.jars.dir"       location="${resources.dir}/jars"/>
+
+	<!-- ==== PGauge Source and Build Properties ==== -->
+	<property name="pgauge.src.dir"          location="${java.src.dir}/pgauge"/>
+	<property name="pgauge.build.dir"        location="${java.build.dir}/pgauge"/>
+	<property name="pgauge.classes.dir"      location="${pgauge.build.dir}/classes"/>
+
+	<!-- =========================================================== -->
+	<!--                     Project Libraries                       -->
+	<!-- =========================================================== -->
+	<!-- ==== Library Path Definitions ==== -->
+	<property name="log4j.dir"      location="${lib.dir}/log4j/1.2.17"/>
+	<property name="jfree.dir"      location="${lib.dir}/jfreechart/1.0.12"/>
+
+	<!-- Classpath Specifications -->
+	<path id="compile.classpath">
+		<fileset dir="${log4j.dir}" includes="**/*"/>
+		<fileset dir="${jfree.dir}" includes="**/*"/>
+		<fileset dir="${rti.home}/${rti.jars.dir}" includes="**/*.jar"/>
+	</path>
+	
+	<!-- ================================================================================= -->
+	<!--                                   Clean Targets                                   -->
+	<!-- ================================================================================= -->
+	<target name="clean" extensionOf="master.clean">
+		<delete dir="${java.build.dir}"/>
+		<delete dir="logs"/>
+	</target>
+
+	<!-- ================================================================================= -->
+	<!--                                  Compile Targets                                  -->
+	<!-- ================================================================================= -->
+	<!-- compile the main production code -->	
+	<target name="compile" extensionOf="master.compile">
+		<java-compile srcdir="${pgauge.src.dir}"
+		              outdir="${pgauge.classes.dir}"
+		              classpath="compile.classpath"/>
+	</target>
+
+	<!-- ================================================================================= -->
+	<!--                                  Sandbox Targets                                  -->
+	<!-- ================================================================================= -->
+	<!-- 
+	     The main sandbox preparation target. This will aggregate together all the various
+	     required artefacts scattered around the build environment into the structure that
+	     should be present when installed on a users system (relative to the sandbox dir).
+	-->
+	<target name="sandbox" extensionOf="master.sandbox" depends="compile,jar">
+		<!-- create the required directories -->
+		<mkdir dir="${dist.dir}"/>
+		<mkdir dir="${sandbox.dir}"/>
+
+		<!-- copy across the resources -->
+		<copy todir="${sandbox.dir}">
+			<fileset dir="${resources.dist.dir}/common" includes="**/*"/>
+			<filterset begintoken="[" endtoken="]">
+				<filter token="rtihome" value="${rti.home}"/>
+			</filterset>
+		</copy>
+
+		<!-- chmod anything in a bin directory -->
+		<chmod dir="${sandbox.dir}" perm="777" includes="bin/**/*,**/*.sh"/>
+
+		<!--                    -->
+		<!--  Windows Specific  -->
+		<!--                    -->
+		<!-- Run platform specific fixes such as fixing crlf for Windows bound files! -->
+		<if><isset property="platform.windows"/><then>
+
+			<!-- move some files to .txt extensions -->
+			<move file="${sandbox.dir}/README" tofile="${sandbox.dir}/README.txt"/>
+			<move file="${sandbox.dir}/SOURCE_CODE" tofile="${sandbox.dir}/SOURCE_CODE.txt"/>
+
+			<!-- fix eol settings -->
+			<fixcrlf srcdir="${sandbox.dir}"
+			         includes="**/*.bat,README.txt,SOURCE_CODE.txt"
+			         eol="crlf"/>
+
+		</then></if>		
+	</target>
+
+	<!-- =================================== -->
+	<!--           Jar File Target           -->
+	<!-- =================================== -->
+	<target name="jar" depends="compile">
+		<!-- generate the classpath for the manifest -->
+		<jar destfile="${sandbox.dir}/lib/pgauge.jar">
+			<!-- pgauge code -->
+			<fileset dir="${pgauge.classes.dir}" includes="**/*.class"/>
+			
+			<!-- internal jar resources -->
+			<fileset dir="${resources.jars.dir}/pgauge.jar" includes="**/*"/>
+
+			<!-- license -->
+			<fileset dir="${resources.dist.dir}/common" includes="LICENSE.pgauge"/>
+
+			<!-- build.properties file for version information -->
+			<fileset dir="${basedir}" includes="build.properties"/>
+
+			<!-- dependencies - create just one jarfile -->
+			<archives>
+				<zips>
+					<fileset dir="${log4j.dir}" includes="**/*.jar"/>
+					<fileset dir="${jfree.dir}" includes="**/*.jar"/>
+				</zips>
+			</archives>
+
+			<!-- MANIFEST -->
+			<manifest>
+				<attribute name="Main-Class" value="org.portico.pgauge.Main"/>
+				<attribute name="Built-By" value="The Portico Project"/>
+				<section name="org/portico/pgauge">
+					<attribute name="Implementation-Title" value="PGauge"/>
+					<attribute name="Implementation-Version" value="${build.version} (build ${build.number}) ${TODAY}"/>
+					<attribute name="Implementation-Vendor" value="The Portico Project"/>
+				</section>
+			</manifest>
+		</jar>
+
+	</target>
+
+	<!-- ================================================================================= -->
+	<!--                             Release Generation Targets                            -->
+	<!-- ================================================================================= -->
+	<!-- 
+	     The parent release target. This will run a clean and then compile all code, run all
+	     tests, generate a sandbox and place all additional release artefacts (such as javadoc)
+	     in with it in preparation for release.
+	-->
+	<target name="release" extensionOf="master.release" depends="clean,sandbox"/>
+
+</project>

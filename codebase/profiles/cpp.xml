@@ -1,0 +1,202 @@
+<?xml version="1.0"?>
+<!--
+               Welcome to PGauge - HLA Benchmarking Suite
+               https://github.com/openlvc/pgauge
+
+         File: profiles/cpp.xml
+      Purpose: The common cpp profile defining compile, link and sandbox
+               tasks. Currently supports Windows, Linux and Mac OS X
+-->
+<project name="cpp">
+
+	<!-- ================================================================================= -->
+	<!--                              Properties Declarations                              -->
+	<!-- ================================================================================= -->
+	<!-- set the LD_LIBRARY_PATH if it isn't in the environment -->
+	<property name="env.LD_LIBRARY_PATH" value="."/>
+
+	<!-- ====================== -->
+	<!-- general c++ properties -->
+	<!-- ====================== -->
+	<property name="cpp.src.dir"                  location="${src.dir}/cpp"/>
+	<property name="cpp.inc.dir"                  location="${cpp.src.dir}/include"/>
+	<property name="cpp.build.dir"                location="${build.dir}/cpp/temp"/>
+	<property name="cpp.output.dir"               location="${build.dir}/cpp/complete"/>
+
+	<!-- =============== -->
+	<!-- java properties -->
+	<!-- =============== -->
+	<property name="cpp.inc.jvm.dir"              location="${env.JAVA_HOME}/include"/>
+
+	<!-- ================================================================================= -->
+	<!--                                Target Declarations                                -->
+	<!-- ================================================================================= -->
+
+	<!-- =========================================================== -->
+	<!-- >>>> Target: cpp.clean                                      -->
+	<!-- =========================================================== -->
+	<target name="cpp.clean">
+		<delete dir="${build.dir}/cpp"/>
+	</target>
+
+	<!-- ================================================================================= -->
+	<!--                       (Target Group) Platform Setup Targets                       -->
+	<!-- ================================================================================= -->
+	<!--
+	     >>>> Platform-Specific Setup Targets <<<<
+	      These tasks will set various properties depending on the platform
+	      on which the build is executing. Each of the cpp.init.* targets will
+	      be called, but they will only run if their target platform is the one
+	      currently being built on.
+	-->
+
+	<!-- ************************** -->
+	<!-- **** TARGET: cpp.init **** -->
+	<!-- ************************** -->
+	<target name="cpp.init" depends="cpp.init.win32,cpp.init.linux,cpp.init.macos">
+	</target>
+
+	<!-- ******************************** -->
+	<!-- **** TARGET: cpp.init.win32 **** -->
+	<!-- ******************************** -->
+	<target name="cpp.init.win32" if="platform.win32">
+		<echo>System is Windows, performing Windows-specific setup</echo>
+
+		<echo>MSVC Support has been Enabled</echo>
+		<echo>***** Special MSVC NOTE *****</echo>
+		<echo> To build pgauge, the msvc compiler and other</echo>
+		<echo> tools must be available from the command line.</echo>
+		<echo> Remember to run vcvars32.bat.</echo>
+		<echo>*****************************</echo>
+
+		<property name="cpp.application.name"    value="${app.shortname}-win32.exe"/>
+		<property name="platform.jvm.dir"        value="${env.JAVA_HOME}/lib"/>
+	</target>
+
+	<!-- ******************************** -->
+	<!-- **** TARGET: cpp.init.linux **** -->
+	<!-- ******************************** -->
+	<target name="cpp.init.linux" if="platform.linux">
+		<echo>System is Linux, performing Linux-specific setup</echo>
+
+		<property name="cpp.application.name"    value="${app.shortname}-linux"/>
+
+		<!-- set the location of the appropriate jvm include files -->
+		<condition property="platform.jvm.dir"
+		           value="${env.JAVA_HOME}/jre/lib/i386/client"
+		           else="${env.JAVA_HOME}/jre/lib/amd64/server">
+			<os arch="i386"/>
+		</condition>
+	</target>
+
+	<!-- ******************************** -->
+	<!-- **** TARGET: cpp.init.macos **** -->
+	<!-- ******************************** -->
+	<target name="cpp.init.macos" if="platform.macos">
+		<echo>System is Mac OS X, performing Mac OS X-specific setup</echo>
+
+		<property name="cpp.application.name"    value="${app.shortname}-macos"/>
+	</target>
+
+	<!-- ================================================================================= -->
+	<!--                            (Target Group) C++ Compile                             -->
+	<!-- ================================================================================= -->
+	<target name="cpp.compile" depends="cpp.compile.win32,cpp.compile.linux,cpp.compile.macos">
+	</target>
+
+	<!-- ********************************** -->
+	<!-- **** TARGET: cpp.compile.init **** -->
+	<!-- ********************************** -->
+	<target name="cpp.compile.init" depends="cpp.init">
+		<!-- set up the working location -->
+		<mkdir dir="${cpp.build.dir}"/>
+		<mkdir dir="${cpp.output.dir}"/> <!-- this is where the finished product goes -->
+	</target>
+
+	<!-- *********************************** -->
+	<!-- **** TARGET: cpp.compile.win32 **** -->
+	<!-- *********************************** -->
+	<target name="cpp.compile.win32" depends="cpp.compile.init" if="platform.win32">
+		<mkdir dir="${cpp.build.dir}/obj"/>
+		<!-- run cpptask -->
+		<cpptask outfile="${cpp.output.dir}/${cpp.application.name}"
+		         objdir="${cpp.build.dir}/obj"
+		         outtype="executable"
+		         compiler="msvc"
+		         compilerArgs="/O2 /EHsc /GR /MD /W0"
+		         linkerArgs="">
+			<define name="WIN32"/>
+			<define name="RTI_USES_STD_FSTREAM"/>
+			<fileset dir="${cpp.src.dir}" includes="**/*.cpp"/>
+			<includepath path="${cpp.inc.dir};${rti.home}\\${rti.include.dir}"/>
+			<library path="${rti.home}\\${rti.lib.dir}" libs="RTI-NG,FedTime"/>
+		</cpptask>
+	</target>
+
+	<!-- *********************************** -->
+	<!-- **** TARGET: cpp.compile.linux **** -->	
+	<!-- *********************************** -->
+	<target name="cpp.compile.linux" depends="cpp.compile.init" if="platform.linux">
+		<mkdir dir="${cpp.build.dir}/obj"/>
+		<!-- run cpptask -->
+		<cpptask outfile="${cpp.output.dir}/${cpp.application.name}"
+		         objdir="${cpp.build.dir}/obj"
+		         outtype="executable"
+		         compiler="g++"
+		         compilerArgs="-O2 -fPIC -g"
+		         linkerArgs="">
+			<define name="RTI_USES_STD_FSTREAM"/>
+			<fileset dir="${cpp.src.dir}" includes="**/*.cpp"/>
+			<includepath path="${cpp.inc.dir};${rti.home}/${rti.include.dir}"/>
+			<library path="${rti.home}/${rti.lib.dir}" libs="RTI-NG,FedTime"/>
+		</cpptask>
+	</target>
+
+	<!-- *********************************** -->
+	<!-- **** TARGET: cpp.compile.macos **** -->
+	<!-- *********************************** -->
+	<target name="cpp.compile.macos" depends="cpp.compile.init" if="platform.macos">
+		<mkdir dir="${cpp.build.dir}/obj"/>
+		<!-- run cpptask -->
+		<cpptask outfile="${cpp.output.dir}/${cpp.application.name}"
+		         objdir="${cpp.build.dir}/obj"
+		         outtype="executable"
+		         compiler="g++"
+		         compilerArgs="-g -arch i386 -arch ppc -fPIC"
+		         linkerArgs="-framework JavaVM -arch i386 -arch ppc">
+			<define name="RTI_USES_STD_FSTREAM"/>
+			<fileset dir="${cpp.src.dir}" includes="**/*.cpp"/>
+			<includepath path="${cpp.inc.dir};${rti.home}/${rti.include.dir}"/>
+			<library path="${rti.home}/${rti.lib.dir}" libs="RTI-NG"/>
+		</cpptask>
+	</target>
+
+	<!-- ================================================================================= -->
+	<!--                        (Target Group) C++ Sandbox Generation                      -->
+	<!-- ================================================================================= -->
+	<!-- ***************************** -->
+	<!-- **** TARGET: cpp.sandbox **** -->
+	<!-- ***************************** -->
+	<!-- NOTE: depends on java.sandbox to generate the majority of the structure -->
+	<target name="cpp.sandbox" depends="java.sandbox,cpp.compile">
+		<!-- copy the finished stuff over -->
+		<mkdir dir="${dist.bin.dir}"/>
+		<copy todir="${dist.bin.dir}/cpp">
+			<fileset dir="${cpp.output.dir}"
+			         includes="**/pgauge*"
+			         excludes="**/history.xml;**/log*"
+			         followsymlinks="false"/>
+		</copy>
+
+		<!-- chmod them -->
+		<chmod dir="${dist.bin.dir}" perm="777" includes="**/*"/>
+	</target>
+
+	<!-- ================================================================================= -->
+	<!--                        (Target Group) C++ Release Generation                      -->
+	<!-- ================================================================================= -->
+	<target name="cpp.release" depends="java.release,cpp.sandbox">
+		<echo>Nothing more to do in C++ release generation</echo>
+	</target>
+
+</project>

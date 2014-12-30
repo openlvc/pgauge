@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# bring in the environment settings
+source bin/rti-environment
+
+# Fire up pgauge
+if [ -f ./bin/cpp/pgauge-macos ]
+then
+	./bin/cpp/pgauge-macos -scenario=exmanager $*
+else
+	./bin/cpp/pgauge-linux -scenario=exmanager $*
+fi
+
