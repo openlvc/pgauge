@@ -18,3 +18,5 @@
 /codebase/dist
 /codebase/savedata
 
+/Debug/
+/cpp-pgauge-macosx/
