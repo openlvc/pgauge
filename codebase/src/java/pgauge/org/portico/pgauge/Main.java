@@ -42,6 +42,17 @@ public class Main
 	//----------------------------------------------------------
 	public static void main( String[] args ) throws Exception
 	{
+		// check for a help request
+		for( String temp : args )
+		{
+			if( temp.equals("--help") )
+			{
+				System.out.println( PGConfiguration.usage() );
+				return;
+			}
+		}
+
+		// parse the command line arguments and get our configuration
 		PGConfiguration configuration = PGConfiguration.defaultConfiguration();
 		configuration.parse( args );
 		
@@ -61,7 +72,6 @@ public class Main
 		{
 			Logger logger = PGUtilities.getLogger( "pgauge" );
 			logger.error( "No scenario provided" );
-			logger.error( "usage: " );
 			logger.error( PGConfiguration.usage() );
 		}
 	}

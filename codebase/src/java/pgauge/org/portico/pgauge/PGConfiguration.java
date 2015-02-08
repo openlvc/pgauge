@@ -365,16 +365,16 @@ public class PGConfiguration implements Cloneable
 	{
 		for( String argument : commandline )
 		{
-			if( argument.startsWith("-") == false )
+			if( argument.startsWith("--") == false )
 				continue;
 			
-			// break it down on the = sign (ignore the "-")
+			// break it down on the = sign (ignore the "--")
 			String property = "";
 			String value = "";
 			int equalsSign = argument.indexOf( "=" );
 			if( equalsSign > 0 )
 			{
-				property = argument.substring( 1, equalsSign );
+				property = argument.substring( 2, equalsSign );
 				value = argument.substring( equalsSign+1 );
 			}
 			else
@@ -436,26 +436,26 @@ public class PGConfiguration implements Cloneable
 		builder.append( newline );
 		builder.append( "Usage: All options provide in following form: -optionName=optionValue" );
 		builder.append( newline );
-		builder.append( "Usage: -scenario=scenarioType         (default:unset)"+newline );
-		builder.append( "           options: throughput,latency,objectCreation"+newline );
-		builder.append( "       -federateName=String           (default:unknown)"+newline );
-		builder.append( "       -federationName=String         (default:pgauge)"+newline );
-		builder.append( "       -fedFile=String                (default:etc/pgauge.fed)"+newline );		
-		builder.append( "       -timestepped=boolean           (default:false)"+newline );
-		builder.append( "       -iterations=int                (default:10000)"+newline );
-		builder.append( "       -printInterval=int             (default:1000)"+newline );
-		builder.append( "       -recordInterval=int            (default:1000)"+newline );
-		builder.append( "       -log (if present, log to file) (default:false)"+newline );
-		builder.append( "       -payload=String                (default:4KB)"+newline );
-		builder.append( "       -livegui                       (default:false)"+newline );
-		builder.append( "       -chart                         (default:false)"+newline );
+		builder.append( "Usage: --scenario=scenarioType         (default:unset)"+newline );
+		builder.append( "            options: throughput,latency,objectCreation"+newline );
+		builder.append( "       --federateName=String           (default:unknown)"+newline );
+		builder.append( "       --federationName=String         (default:pgauge)"+newline );
+		builder.append( "       --fedFile=String                (default:etc/pgauge.fed)"+newline );		
+		builder.append( "       --timestepped=boolean           (default:false)"+newline );
+		builder.append( "       --iterations=int                (default:10000)"+newline );
+		builder.append( "       --printInterval=int             (default:1000)"+newline );
+		builder.append( "       --recordInterval=int            (default:1000)"+newline );
+		builder.append( "       --log (if present, log to file) (default:false)"+newline );
+		builder.append( "       --payload=String                (default:4KB)"+newline );
+		builder.append( "       --livegui                       (default:false)"+newline );
+		builder.append( "       --chart                         (default:false)"+newline );
 		builder.append( newline );
 		builder.append( "Throughput Scenario Specific Options:"+newline );
-		builder.append( "       -objects=int                   (default:1)"+newline );
+		builder.append( "       --objects=int                   (default:1)"+newline );
 		builder.append( "           For Sender: number of objects it will register and update"+newline );
 		builder.append( "           For Listener: total number of objects it expects to discover"+newline );
-		builder.append( "       -senders=int                   (default:1)"+newline );
-		builder.append( "       -listeners=int                 (default:1)"+newline );
+		builder.append( "       --senders=int                   (default:1)"+newline );
+		builder.append( "       --listeners=int                 (default:1)"+newline );
 		builder.append( newline );
 		return builder.toString();
 	}
