@@ -1,1 +1,123 @@
-README
+
+             ================================================
+             ==         PGauge - Performance Gauge         ==
+             ================================================
+
+1. What is PGauge?
+---------------------
+PGauge is an HLA performance testing application. It can be used to benchmark
+the throughput and latency of a particular RTI implementation.
+
+If currently supports the following HLA interfaces:
+
+    - HLA v1.3 (Java)
+    - HLA v1.3 (C++)
+        - Windows
+        - Linux
+        - Mac OS X
+
+Support for IEEE-1516 is planned by not yet implemented.
+
+2. Getting Started
+---------------------
+To start a PGauge federation test, use the provided scripts. Passing "--help" to each
+of them will generate and print command-line argument assistance to screen.
+
+All scripts are provided in two forms: Bash Shell Script and Windows Batch file.
+The scripts are contained in the following directories:
+
+   [PGAUGE_HOME]
+     |-- bin
+         |-- rti-environment         (RTI location configuration)
+         |-- rti-environment.bat     (RTI location configuration)
+         `-- java
+             |-- exmanager           (Execution Manager - *nix)
+             |-- exmanager.bat       (Execution Manager - Windows)
+             `-- throughput 
+                 |-- listener        (Throughput Listener Federate)
+                 |-- listener.bat    (Throughput Listener Federate)
+                 |-- sender          (Throughput Sender Federate)
+                 |-- sender.bat      (Throughput Sender Federate)
+             `-- latency
+                 |-- requester       (Latency Requester Federate)
+                 |-- requester.bat   (Latency Requester Federate)
+                 |-- responder       (Latency Responder Federate)
+                 |-- responder.bat   (Latenry Responder Federate)
+         `cpp
+             |-- exmanager           
+             |-- exmanager.bat       
+             `-- throughput 
+                 |-- listener        
+                 |-- listener.bat    
+                 |-- sender          
+                 |-- sender.bat      
+             `-- latency
+                 |-- requester       
+                 |-- requester.bat   
+                 |-- responder       
+                 |-- responder.bat   
+
+RTI Location Inforamtion
+==========================
+PGauge has been designed to support other RTIs in addition to Portico. Inside the main
+bin directory you will find RTI environment setup scripts. These are called by each of
+the federate scripts before they start so that they can get their appropriate setup.
+
+To change to a different RTI or point PGague at the location of your RTI, edit these
+environment files. Typically a user will need to specify their Portico installation
+location at the least.
+
+
+Throughput Test
+=================
+This scenario uses a number of senders and receivers to measure raw throughput
+performance of the RTI. Senders put their traffic on the network, while receivers
+listen for it. A clock is started at commencement and stopped when all federates
+have reached the final synchronization point. The receivers will not achieve this
+point until they have received all the messages they expect.
+
+Each loop, the sender federate sends out a reflection for each of the objects that
+it has created. It also sends out an interaction. You can run as many senders and
+receiver federates as you like.
+
+For each sender/receiver you can specify:
+
+  - The number of interations for the test
+  - The number of objects to update each iteration
+  - The payload size that is sent with each update/interaction
+  - Whether or not time management should be used
+
+To run the simulation, start the execution manager and then start your preferred number
+of senders and receivers.
+
+ **NOTE** Ensure that the object/iteration counts are the same across all federates
+
+
+Latency Test
+=================
+The latency test consists of two federates: a requester and a responder.
+Not surprisingly, the requester sends out a ping requests, to which the
+responder replies. The round-trip time of the activity is measured and
+presented as the latency.
+
+This volley is completed a number of times to get the average. The user can
+specify:
+
+  - The number of iterations to run the test over
+  - The payload sent with each ping and response
+
+To run the simulation, start the execution manager and then start a single requester
+and responder federate.
+
+ **NOTE** For Portico, be sure to disable bundling in the RTI.rid file first
+          unless you want to skew the results
+
+
+3. Getting Help
+----------------------
+If you require assistance, it is best to file a new issue on GitHub. Failing that,
+you can contact the contact the developers via email.
+
+  - GitHub Issues Page:    http://github.com/openlvc/pgauge/issues
+  - Portico Support Email: support@porticoproject.org
+
